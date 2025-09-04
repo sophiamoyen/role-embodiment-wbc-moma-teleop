@@ -7,8 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>The Role of Embodiment in Intuitive Whole-Body Teleoperation for Mobile Manipulation</title>
 
+  <!-- Fonts & CSS -->
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
-
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
@@ -26,21 +26,212 @@
     .footer { background:#fff; }
     .content.has-text-justified p { text-align: justify; }
     .inline-video { margin-top:1rem; }
-    .inline-video video { width:100%; max-width:960px; border-radius:10px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+    .inline-video video { width:100%; max-width:1200px; border-radius:10px; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+    .wo-vr-img {
+          max-width: 2000px; /* antes era 120px ' */
+        }
+
     /* Override: show full image without cropping in grids */
-  .img-grid .thumb { height: auto !important; object-fit: contain !important; aspect-ratio: auto !important; }
-</style>
+    .img-grid .thumb { height: auto !important; object-fit: contain !important; aspect-ratio: auto !important; }
+
+    /* Banner Styles */
+    .banner-row {
+      display: flex;
+      background: #f0f0f0;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    .banner-label {
+      background: #3b2d82;
+      color: #fff;
+      font-weight: bold;
+      font-size: 1.2rem;
+      padding: 1.5rem;
+      min-width: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .banner-content {
+      flex: 1;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      padding: 1.5rem;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .banner-item {
+      text-align: center;
+      max-width: 220px;
+    }
+    .banner-item img {
+      max-width: 120px;
+      height: auto;
+      display: block;
+      margin: 0 auto 0.5rem auto;
+    }
+
+
+    .metric-box {
+  text-align: center;
+  padding: 1rem;
+}
+
+.metric-title {
+  background: #3b2d82; /* Roxo */
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.2rem;
+  border-radius: 6px;
+  padding: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+
+/* Narrow, centered metric banner inside each card */
+#metrics .metric-title {
+  width: 70%;           /* make the bar narrower than the column */
+  max-width: 220px;     /* cap width on large screens */
+  margin: 0 auto 0.8rem;/* center it and keep the same bottom gap */
+  padding: 0.45rem 0.75rem; /* slightly slimmer padding (optional) */
+}
+
+/* Let it expand on small screens so text wraps nicely */
+@media (max-width: 768px) {
+  #metrics .metric-title {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+
+/* ===== Results grid ===== */
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.result-card {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.result-card img {
+  width: 44%;
+  max-height: 240px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #f8f8f8;
+}
+
+.result-card .rc-text {
+  flex: 1;
+}
+
+.result-card h3 {
+  margin-bottom: .35rem;
+}
+
+.tag-pill {
+  display: inline-block;
+  background: #3b2d82;
+  color: #fff;
+  font-weight: 700;
+  font-size: .8rem;
+  padding: .2rem .6rem;
+  border-radius: 999px;
+  margin-bottom: .5rem;
+}
+
+.result-card ul {
+  margin-top: .25rem;
+  margin-left: 1.1rem;
+}
+
+@media (max-width: 1023px) {
+  .result-grid { grid-template-columns: 1fr; }
+  .result-card { flex-direction: column; align-items: flex-start; }
+  .result-card img { width: 100%; max-height: 280px; }
+}
+
+
+/* ===== Zoom: janelinha central (não ocupa a tela toda) ===== */
+#img-zoom-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,.20);   /* bem mais leve */
+  z-index: 9999;
+  transition: opacity .12s ease;
+  opacity: 0;
+}
+
+#img-zoom-overlay.active { display: flex; opacity: 1; }
+
+/* “janela” que contém a imagem */
+#img-zoom-overlay .panel {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 12px 36px rgba(0,0,0,.25);
+  padding: 10px;
+  transform: scale(.92);
+  transition: transform .12s ease;
+  max-width: min(70vw, 900px);   /* limita o tamanho */
+  max-height: 70vh;
+}
+
+#img-zoom-overlay.active .panel { transform: scale(1); }
+
+#img-zoom-overlay img {
+  display: block;
+  max-width: 100%;
+  max-height: 65vh;              /* sobra um respiro nas bordas */
+  border-radius: 8px;
+  background: #fff;
+}
+
+#img-zoom-overlay .hint {
+  text-align: right;
+  font-size: .85rem;
+  color: #666;
+  margin-top: 6px;
+}
+
+/* cursor sobre as miniaturas */
+#results .result-card img { cursor: zoom-in; }
+
+
+
+  </style>
 
   <link rel="icon" href="./static/images/favicon.svg">
 </head>
 <body>
 
+<!-- Hero -->
 <section class="hero">
   <div class="hero-body">
     <div class="container is-max-desktop">
       <div class="columns is-centered">
         <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title">The Role of Embodiment in Intuitive Whole-Body Teleoperation for Mobile Manipulation</h1>
+          <h1 class="title is-1 publication-title">
+            The Role of Embodiment in Intuitive Whole-Body Teleoperation for Mobile Manipulation
+          </h1>
+          
+          <!-- Authors -->
           <div class="is-size-5 publication-authors">
             <span class="author-block"><a href="https://www.linkedin.com/in/sophiamoyen/">Sophia Bianchi Moyen</a><sup>1,2</sup>,</span>
             <span class="author-block"><a href="https://www.linkedin.com/in/rickmerkrohn/">Rickmer Krohn</a><sup>1</sup>,</span>
@@ -51,6 +242,7 @@
             <span class="author-block"><a href="https://www.linkedin.com/in/georgia-chalvatzaki/">Georgia Chalvatzaki</a><sup>1,3</sup></span>
           </div>
 
+          <!-- Affiliations -->
           <div class="is-size-5 publication-authors">
             <span class="author-block"><sup>1</sup>TU Darmstadt</span>
             <span class="author-block"><sup>2</sup>University of São Paulo</span>
@@ -59,7 +251,7 @@
             <span class="author-block"><sup>5</sup>DFKI</span>
           </div>
 
-          <!-- Publication links ABOVE the video -->
+          <!-- Publication links -->
           <div class="column has-text-centered">
             <div class="publication-links">
               <span class="link-block">
@@ -89,14 +281,14 @@
             </div>
           </div>
 
-          <!-- Inline teaser video directly under the buttons -->
+          <!-- Inline teaser video -->
           <div class="inline-video">
-            <video id="inline-teaser" autoplay muted loop playsinline preload="metadata">
+            <video id="inline-teaser" autoplay muted loop playsinline preload="metadata" controls
+                   style="width:100%; max-width:1200px; border-radius:10px; box-shadow:0 1px 4px rgba(0,0,0,.08);">
               <source src="./static/videos/teaser.mp4" type="video/mp4">
               <source src="./static/videos/teaser.webm" type="video/webm">
               Your browser does not support HTML5 video.
             </video>
-            <p class="is-size-6" style="margin-top:.5rem; color:#666;">Teaser: whole-body teleoperation in long-horizon tasks.</p>
           </div>
 
         </div>
@@ -112,176 +304,423 @@
       <div class="column is-four-fifths">
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
-          <p>Intuitive teleoperation interfaces are essential for mobile manipulation robots to ensure high-quality data collection while reducing operator workload. We study two robot control paradigms— a coupled embodiment integrating arm manipulation and base navigation (WBC) and a decoupled embodiment treating them as separate control entities (SBC)— and two visual feedback mechanisms: immersive VR and conventional screen-based visualization. In a complex, long-horizon task sequence requiring whole-body coordination, we find that VR increases task completion time, cognitive workload, and perceived effort. Coupling manipulation and navigation leads to workload comparable to decoupling, while preliminary experiments suggest that data acquired by coupled teleoperation improves imitation learning performance.</p>
+          <p>
+            Intuitive Teleoperation interfaces are essential for mobile
+manipulation robots to ensure high quality data collection
+while reducing operator workload. A strong sense of
+embodiment combined with minimal physical and cognitive
+demands not only enhances the user experience during
+large-scale data collection, but also helps maintain data
+quality over extended periods. This becomes especially
+crucial for challenging long-horizon mobile manipulation
+tasks that require whole-body coordination. We compare two
+distinct robot control paradigms: a coupled embodiment
+integrating arm manipulation and base navigation functions,
+and a decoupled embodiment treating these systems as
+separate control entities. Additionally, we evaluate two
+visual feedback mechanisms: immersive virtual reality and
+conventional screen-based visualization of the robot's
+field of view. These configurations were systematically
+assessed across a complex, multi-stage task sequence
+requiring integrated planning and execution. Our results
+show that the use of VR as a feedback modality increases
+task completion time, cognitive workload, and perceived
+effort of the teleoperator. Coupling manipulation and
+navigation leads to a comparable workload on the user as
+decoupling the embodiments, while preliminary experiments
+suggest that data acquired by coupled teleoperation leads
+to better imitation learning performance. Our holistic view
+on intuitive teleoperation interfaces provides valuable
+insight into collecting high-quality, high-dimensional
+mobile manipulation data at scale with the human operator
+in mind. 
+          </p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Generic Section with Title + Image (1) -->
-<section class="section" id="section-1">
+<!-- Teleoperation Setup -->
+<section class="section" id="teleoperation-setup">
   <div class="container is-max-desktop">
     <div class="columns is-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Teleoperation Setup</h2>
-                <div class="content has-text-justified">
-          <p>oi</p>
+        <div class="content has-text-justified">
+          <!-- <p>Overview of the teleoperation setup, controllers and visualization modalities.</p> -->
+        </div>
 
-          <!-- Subsection: Real Robot vs Simulation -->
-<div class="columns is-variable is-5" style="margin-top:1rem;">
-  <!-- Left: Real Robot -->
-  <div class="column">
-    <h3 class="title is-4" style="margin-bottom:.5rem;">Real Robot</h3>
-    <figure class="image">
-      <!-- troque o src pela sua imagem -->
-      <img class="thumb"
-           src="static/images/real.png"
-           alt="Real robot teleoperation setup" loading="lazy">
-    </figure>
-    <!-- opcional: legenda -->
-    <!-- <p class="has-text-grey is-size-6" style="margin-top:.35rem;">Descrição curta do setup real.</p> -->
-  </div>
-
-  <!-- Right: Simulation -->
-  <div class="column">
-    <h3 class="title is-4" style="margin-bottom:.5rem;">Simulation</h3>
-    <figure class="image">
-      <!-- troque o src pela sua imagem -->
-      <img class="thumb"
-           src="static/images/simulation.png"
-           alt="Simulation teleoperation setup" loading="lazy">
-    </figure>
-    <!-- opcional: legenda -->
-    <!-- <p class="has-text-grey is-size-6" style="margin-top:.35rem;">Descrição curta do setup em simulação.</p> -->
-  </div>
-</div>
-
-
-          <!-- Subsection: Real Robot vs Simulation -->
-<div class="columns is-variable is-6" style="margin-top:1rem;">
-  <!-- Left: Real Robot -->
-  <div class="column">
-    <h3 class="title is-4" style="margin-bottom:.5rem;">Whole-Body Controller</h3>
-    <figure class="image">
-      <!-- troque o src pela sua imagem -->
-      <img class="thumb"
-           src="static/images/wbc.png"
-           alt="Real robot teleoperation setup" loading="lazy">
-    </figure>
-    <!-- opcional: legenda -->
-    <!-- <p class="has-text-grey is-size-6" style="margin-top:.35rem;">Descrição curta do setup real.</p> -->
-  </div>
-
-  <!-- Right: Simulation -->
-  <div class="column is-variable is-6">
-    <h3 class="title is-4" style="margin-bottom:.5rem;">Separate Body Controller</h3>
-    <figure class="image">
-      <!-- troque o src pela sua imagem -->
-      <img class="thumb"
-           src="static/images/sbc.png"
-           alt="Simulation teleoperation setup" loading="lazy">
-    </figure>
-    
-    <!-- opcional: legenda -->
-    <!-- <p class="has-text-grey is-size-6" style="margin-top:.35rem;">Descrição curta do setup em simulação.</p> -->
-  </div>
-</div>
-
-          <!-- Subsection: Real Robot vs Simulation -->
-<div class="columns is-variable is-5" style="margin-top:1rem;">
-  <!-- Left: Real Robot -->
-  <div class="column">
-    <h3 class="title is-4" style="margin-bottom:.5rem;">VR Headset</h3>
-    <figure class="image">
-      <!-- troque o src pela sua imagem -->
-      <img class="thumb"
-           src="static/images/vr_stream.png"
-           alt="Real robot teleoperation setup" loading="lazy">
-    </figure>
-    
-
-        <figure class="image">
-      <!-- troque o src pela sua imagem -->
-      <img class="thumb"
-           src="static/images/vr.gif"
-           alt="Real robot teleoperation setup" loading="lazy">
-    </figure>
-    <!-- opcional: legenda -->
-    <!-- <p class="has-text-grey is-size-6" style="margin-top:.35rem;">Descrição curta do setup real.</p> -->
-  </div>
-
-  <!-- Right: Simulation -->
-  <div class="column">
-    <h3 class="title is-4" style="margin-bottom:.5rem;">Screen Assistance</h3>
-    <figure class="image">
-      <!-- troque o src pela sua imagem -->
-      <img class="thumb"
-           src="static/images/screen.png"
-           alt="Simulation teleoperation setup" loading="lazy">
-    </figure>
-    <!-- opcional: legenda -->
-    <!-- <p class="has-text-grey is-size-6" style="margin-top:.35rem;">Descrição curta do setup em simulação.</p> -->
-  </div>
-</div>
-    </div>
-  </div>
-</section>
-
-
-
-<section class="section" id="section-1">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Evaluation Metrics</h2>
-                <div class="content has-text-justified">
-          <p>oi</p>
+        <!-- Banner -->
+        <div class="banner-row">
+          <div class="banner-label">Controllers</div>
+          <div class="banner-content">
+            <div class="banner-item">
+              <img src="static/images/sbc.png" alt="SBC">
+              <p>Separate Body Controller <strong>(SBC)</strong></p>
+            </div>
+            <div class="banner-item">
+              <img src="static/images/wbc.png" alt="WBC">
+              <p>WholeBody Controller <strong>(WBC)</strong></p>
+            </div>
           </div>
+        </div>
+
+<div class="banner-row">
+  <div class="banner-label">Visualization<br>Modalities</div>
+  <div class="banner-content">
+    <div class="banner-item">
+      <img src="static/images/with_VR.png" alt="with VR">
+      <p>with <strong>VR</strong></p>
+    </div>
+    <div class="banner-item">
+      <!-- aumentamos o tamanho desta imagem -->
+      <img src="static/images/wo_VR.png" alt="without VR" class="wo-vr-img">
+      <p>without <strong>VR</strong></p>
+    </div>
+  </div>
 </div>
+
+
+      </div>
     </div>
   </div>
 </section>
 
 
+<!-- Interface Combinations Banner -->
+<section class="section" id="interface-combinations">
+  <div class="container is-max-desktop" style="max-width:1400px;">
+    <h2 class="title is-3 has-text-centered" style="margin-bottom:1.5rem;">
+      Examples of Interface Combinations
+    </h2>
 
-<section class="section" id="section-1">
+    <div class="columns is-variable is-6">
+      
+      <!-- Left: Real Robot -->
+      <div class="column">
+        <div style="border:1px solid #ccc; border-radius:10px; overflow:hidden; display:flex; flex-direction:row;">
+          <!-- Real Robot image -->
+          <div style="flex:1; position:relative;">
+            <img src="static/images/elena.png" alt="Real Robot" style="width:100%; height:auto;">
+            <span style="position:absolute; bottom:8px; left:8px; background:#000; color:#fff; padding:4px 10px; border-radius:4px; font-weight:bold;">Real Robot</span>
+          </div>
+          <!-- Controllers/Visualization -->
+          <div style="flex:1; display:flex; flex-direction:column; justify-content:space-between; padding:1rem; border-left:1px solid #ccc;">
+            <div style="display:flex; align-items:center; margin-bottom:1rem;">
+              <img src="static/images/wbc.png" alt="WBC" style="max-width:60px; margin-right:10px;">
+              <span><strong>Whole Body Controller (WBC)</strong></span>
+            </div>
+            <div style="display:flex; align-items:center;">
+              <img src="static/images/with_VR.png" alt="VR HMD" style="max-width:60px; margin-right:10px;">
+              <span>with <strong>VR HMD</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Simulation -->
+      <div class="column">
+        <div style="border:1px solid #ccc; border-radius:10px; overflow:hidden; display:flex; flex-direction:row;">
+          <!-- Simulation image -->
+          <div style="flex:1; position:relative;">
+            <img src="static/images/manu.png" alt="Simulation" style="width:100%; height:auto;">
+            <span style="position:absolute; bottom:8px; left:8px; background:#000; color:#fff; padding:4px 10px; border-radius:4px; font-weight:bold;">Simulation</span>
+          </div>
+          <!-- Controllers/Visualization -->
+          <div style="flex:1; display:flex; flex-direction:column; justify-content:space-between; padding:1rem; border-left:1px solid #ccc;">
+            <div style="display:flex; align-items:center; margin-bottom:1rem;">
+              <img src="static/images/sbc.png" alt="SBC" style="max-width:60px; margin-right:10px;">
+              <span><strong>Separate Body Controller (SBC)</strong></span>
+            </div>
+            <div style="display:flex; align-items:center;">
+              <img src="static/images/without_VR.png" alt="Screen without VR" style="max-width:60px; margin-right:10px;">
+              <span>without <strong>VR HMD</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- Evaluation Metrics -->
+<section class="section" id="metrics">
   <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Results</h2>
-                <div class="content has-text-justified">
-          <p>oi</p>
-</div>
+    <h2 class="title is-3 has-text-centered" style="margin-bottom:2rem;">Evaluation Metrics</h2>
+
+    <div class="columns is-multiline is-variable is-6">
+
+      <!-- Usability -->
+      <div class="column is-one-third">
+        <div class="metric-box">
+          <div class="metric-title">Usability</div>
+          <p><strong>Trial:</strong> SEQ<br>
+             <strong>Modality:</strong> UMUX</p>
+        </div>
+      </div>
+
+      <!-- Simulation Sickness -->
+      <div class="column is-one-third">
+        <div class="metric-box">
+          <div class="metric-title">Simulation Sickness</div>
+          <p><strong>Modality:</strong> reduced SSQ</p>
+        </div>
+      </div>
+
+      <!-- Performance -->
+      <div class="column is-one-third">
+        <div class="metric-box">
+          <div class="metric-title">Performance</div>
+          <p><strong>Trial:</strong> Success rate and Task completion times</p>
+        </div>
+      </div>
+
+      <!-- Sense of Embodiment -->
+      <div class="column is-one-third">
+        <div class="metric-box">
+          <div class="metric-title">Sense of Embodiment</div>
+          <p><strong>Modality:</strong> Tailored questions</p>
+        </div>
+      </div>
+
+      <!-- Teleoperation Specifics -->
+      <div class="column is-one-third">
+        <div class="metric-box">
+          <div class="metric-title">Teleoperation Specifics</div>
+          <p><strong>Trial:</strong> Choice of camera stream (with VR), controller poses<br>
+             <strong>Modality:</strong> Tailored questions</p>
+        </div>
+      </div>
+
+      <!-- Post-test -->
+      <div class="column is-one-third">
+        <div class="metric-box">
+          <div class="metric-title">Post-test</div>
+          <p>Final <strong>Modality</strong> comparison and open questions</p>
+        </div>
+      </div>
+
+      <!-- Workload -->
+      <div class="column is-one-third">
+        <div class="metric-box">
+          <div class="metric-title">Workload</div>
+          <p><strong>Modality:</strong> Raw NASA TLX<br>
+             <strong>Trial:</strong> ARWES</p>
+        </div>
+      </div>
+
+      <!-- Training Quality -->
+      <div class="column is-one-third">
+        <div class="metric-box">
+          <div class="metric-title">Training Quality</div>
+          <p><strong>Modality:</strong> OATS</p>
+        </div>
+      </div>
+
+      <!-- Ergonomics -->
+      <div class="column is-one-third">
+        <div class="metric-box">
+          <div class="metric-title">Ergonomics</div>
+          <p><strong>Trial:</strong> RULA and CoM Divergence</p>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
 
-<section class="section" id="section-1">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Conclusion</h2>
-                <div class="content has-text-justified">
-          <p>oi</p>
-</div>
+
+<!-- Results -->
+<section class="section" id="results">
+  <div class="container">
+    <h2 class="title is-3 has-text-centered">Results</h2>
+
+    <div class="result-grid">
+
+      <!-- Workload (radar) -->
+      <div class="result-card">
+        <img src="static/images/workload_radar.png" alt="NASA TLX radar">
+        <div class="rc-text">
+          <span class="tag-pill">Workload – TLX</span>
+          <h3 class="title is-5">VR increased perceived workload</h3>
+          <ul>
+            <li>Usage of <strong>VR HMD</strong> imposed higher perceived workload (p &lt; 0.01), marginally for temporal demand (p &lt; 0.1).</li>
+            <li>Minimal effect from <em>Controller</em>: higher physical strain for <strong>SBC</strong> (p &lt; 0.05), higher frustration for <strong>WBC</strong> (p &lt; 0.01).</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Workload (boxplot) -->
+      <div class="result-card">
+        <img src="static/images/workload_box.png" alt="NASA TLX boxplot">
+        <div class="rc-text">
+          <span class="tag-pill">Workload – TLX</span>
+          <h3 class="title is-5">Raw NASA TLX scores</h3>
+          <ul>
+            <li>Usage of <strong>VR HMD</strong> imposed <strong>high workload</strong> on average.</li>
+            <li>Without VR imposed <strong>somewhat high workload</strong> on average.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Usability (SEQ) -->
+      <div class="result-card">
+        <img src="static/images/usability_seq.png" alt="SEQ lines">
+        <div class="rc-text">
+          <span class="tag-pill">Usability – SEQ</span>
+          <h3 class="title is-5">Single Ease Question</h3>
+          <ul>
+            <li>Usage of <strong>VR HMD</strong> resulted in worse usability scores (p = 0.003).</li>
+            <li>Very slight improvement over trials (p = 0.068).</li>
+            <li>No significant effect from <em>Controller</em> (p = 0.39).</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Usability (UMUX) -->
+      <div class="result-card">
+        <img src="static/images/usability_umux.png" alt="UMUX boxplot">
+        <div class="rc-text">
+          <span class="tag-pill">Usability – UMUX</span>
+          <h3 class="title is-5">Usability Metric for User Experience</h3>
+          <ul>
+            <li>Usage of <strong>VR HMD</strong> resulted in worse usability scores (p &lt; 0.01).</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Task performance – times -->
+      <div class="result-card">
+        <img src="static/images/completion_times.png" alt="Completion time plots">
+        <div class="rc-text">
+          <span class="tag-pill">Task Performance</span>
+          <h3 class="title is-5">Completion times</h3>
+          <ul>
+            <li>Usage of <strong>VR HMD</strong> significantly increased total completion time (+142s, p = 0.026).</li>
+            <li><strong>WBC</strong> was significantly slower than SBC overall (+169s, p = 0.025).</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Task performance – success -->
+      <div class="result-card">
+        <img src="static/images/success_rates.png" alt="Success rates bars">
+        <div class="rc-text">
+          <span class="tag-pill">Task Performance</span>
+          <h3 class="title is-5">Success rates</h3>
+          <ul>
+            <li>High success across all modalities and controllers, mean = 9.4 / 10.</li>
+            <li>Slight, but significant difference between controller and modalities or trials (p &gt; 0.2).</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Ergonomics – CoM -->
+      <div class="result-card">
+        <img src="static/images/ergonomics_com.png" alt="CoM divergence traces">
+        <div class="rc-text">
+          <span class="tag-pill">Ergonomics</span>
+          <h3 class="title is-5">Center of Mass divergence</h3>
+          <ul>
+            <li>More frequent shifts for <strong>WBC</strong> due to inherent locomotion strategy.</li>
+            <li>Greater <strong>posture instability</strong> and whole-body engagement of WBC contributes to fatigue.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Teleoperation specifics – camera view -->
+      <div class="result-card">
+        <img src="static/images/camera_view.png" alt="Camera view usage">
+        <div class="rc-text">
+          <span class="tag-pill">Teleoperation</span>
+          <h3 class="title is-5">Choice of camera view</h3>
+          <ul>
+            <li>Users of <strong>SBC</strong> used more the head camera view than users of WBC (t-test p &lt; 0.0001).</li>
+            <li>Higher sense of embodiment and confidence for SBC users.</li>
+          </ul>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
 
-<section class="section" id="section-1">
+
+<!-- Conclusion -->
+<section class="section" id="conclusion">
+  <div class="container is-max-desktop" style="max-width:1400px;">
+    <h2 class="title is-3 has-text-centered" style="margin-bottom:1.5rem;">Conclusion</h2>
+
+    <div class="columns is-variable is-6">
+      
+      <!-- Left: Controllers -->
+      <div class="column">
+        <div style="border:1px solid #ccc; border-radius:10px; padding:1.5rem; background:#fff;">
+          <div style="background:#3b2d82; color:#fff; font-weight:bold; padding:0.5rem 1rem; border-radius:6px; margin-bottom:1rem; display:inline-block;">
+            Controllers
+          </div>
+          
+          <div style="margin-bottom:1rem; padding:0.8rem; border-left:4px solid #3b2d82; background:#f9f9f9; border-radius:6px;">
+            <strong>SBC</strong> controller <strong>preferred</strong> over <strong>WBC</strong> for comfort and efficiency, though <strong>SBC</strong> required more frequent arm repositioning.
+          </div>
+          
+          <div style="margin-bottom:1rem; padding:0.8rem; border-left:4px solid #3b2d82; background:#f9f9f9; border-radius:6px;">
+            <strong>Lower perceived physical demand</strong> for <strong>WBC</strong> despite higher CoM divergence.
+          </div>
+          
+          <div style="padding:0.8rem; border-left:4px solid #3b2d82; background:#f9f9f9; border-radius:6px;">
+            <strong>SBC outperforms WBC</strong> in usability and efficiency, though <strong>WBC</strong> is more <strong>cost-effective</strong>, smoother, and provides <strong>interesting framework</strong> for policy learning — but needs refinement.
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Visualization Modalities -->
+      <div class="column">
+        <div style="border:1px solid #ccc; border-radius:10px; padding:1.5rem; background:#fff;">
+          <div style="background:#3b2d82; color:#fff; font-weight:bold; padding:0.5rem 1rem; border-radius:6px; margin-bottom:1rem; display:inline-block;">
+            Visualization Modalities
+          </div>
+          
+          <div style="margin-bottom:1rem; padding:0.8rem; border-left:4px solid #3b2d82; background:#f9f9f9; border-radius:6px;">
+            <strong>Without VR outperforms VR</strong> in usability, workload, and task performance and was largely preferred by participants.
+          </div>
+          
+          <div style="margin-bottom:1rem; padding:0.8rem; border-left:4px solid #3b2d82; background:#f9f9f9; border-radius:6px;">
+            <strong>VR</strong> hindered by <strong>video lag</strong> and caused <strong>moderate simulation sickness</strong>.
+          </div>
+          
+          <div style="padding:0.8rem; border-left:4px solid #3b2d82; background:#f9f9f9; border-radius:6px;">
+            <strong>Same-room</strong> teleoperation <strong>favoured without VR</strong>.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+<!-- Acknowledgments -->
+<section class="section" id="acknowledgments">
   <div class="container is-max-desktop">
     <div class="columns is-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Acknowledgments</h2>
-                <div class="content has-text-justified">
-          <p>oi</p>
-</div>
+        <div class="content has-text-justified">
+          <p>The authors would like to thank Emanuel Iwanow, Elisa Alboni, Sohan Rudra, Snehal Jauhri, Ali Younes, Franziska Herbert, Mel Germroth, Han Liu, and Prof. Larissa Driemeier for their valuable support and advice. Special thanks are extended to all participants of the user study, who generously dedicated their time to explore the world of robotic teleoperation and contributed to the success of this research.
+
+This work was supported by the German Research Foundation (DFG), the EU’s Horizon Europe project ARISE, and the German Federal Ministry of Education and Research (BMBF) project Robotics Institute Germany (RIG).</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
-
+<!-- BibTeX -->
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
@@ -294,9 +733,13 @@
   </div>
 </section>
 
+<!-- Footer -->
 <footer class="footer">
   <div class="container">
-
+    <div class="content has-text-centered">
+      <a class="icon-link" href="paper.pdf"><i class="fas fa-file-pdf"></i></a>
+      <a class="icon-link" href="https://github.com/sophiamoyen/role-embodiment-wbc-moma-teleop"><i class="fab fa-github"></i></a>
+    </div>
     <div class="columns is-centered">
       <div class="column is-8">
         <div class="content">
@@ -306,6 +749,61 @@
     </div>
   </div>
 </footer>
+
+
+<!-- Janelinha de zoom (central, pequena) -->
+<div id="img-zoom-overlay" aria-hidden="true">
+  <div class="panel" role="dialog" aria-label="Zoomed chart">
+    <img src="" alt="zoomed chart">
+    <div class="hint">Click outside or press Esc to close</div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const overlay   = document.getElementById('img-zoom-overlay');
+    const panelImg  = overlay.querySelector('img');
+    let openTimer   = null;
+
+    // todas as imagens dentro dos cards de resultados
+    const thumbs = document.querySelectorAll('#results .result-card img');
+
+    thumbs.forEach(img => {
+      // Abre com um pequeno delay no hover (menos “repentino”)
+      img.addEventListener('mouseenter', () => {
+        clearTimeout(openTimer);
+        openTimer = setTimeout(() => {
+          panelImg.src = img.src;
+          overlay.classList.add('active');
+        }, 120); // 120ms
+      });
+
+      // Cancela se o mouse sair antes do delay
+      img.addEventListener('mouseleave', () => {
+        clearTimeout(openTimer);
+      });
+
+      // Em dispositivos touch / clique também abre
+      img.addEventListener('click', () => {
+        clearTimeout(openTimer);
+        panelImg.src = img.src;
+        overlay.classList.add('active');
+      });
+    });
+
+    // Fecha clicando fora da “panel”
+    overlay.addEventListener('click', (e) => {
+      const panel = e.target.closest('.panel');
+      if (!panel) overlay.classList.remove('active');
+    });
+
+    // Fecha com ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') overlay.classList.remove('active');
+    });
+  })();
+</script>
+
 
 </body>
 </html>
